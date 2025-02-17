@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("Fps")
 public class FakeStoreProductService implements IProductservice{
 
     @Autowired  //-- it will try to find bean of restemplateBuilder inject this to fakestore productservice
@@ -99,6 +99,16 @@ return products;
 
             return from(fakeStoreProductDtoResponseEntity.getBody());
 
+    }
+
+    @Override
+    public Product save(Product product) {
+        return null;
+    }
+
+    @Override
+    public String getCategoryNamebyProductId(Long productId) {
+        return "";
     }
 
 

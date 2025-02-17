@@ -11,4 +11,7 @@ public interface IProductservice {
     Product getProductbyId(Long id);
 
     Product replaceProduct(Long productId, Product product);
+
+    Product save(Product product);
+    String getCategoryNamebyProductId(Long productId);
 }

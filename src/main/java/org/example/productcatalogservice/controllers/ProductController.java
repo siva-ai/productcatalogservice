@@ -7,6 +7,7 @@ import org.example.productcatalogservice.productmodels.Product;
 import org.example.productcatalogservice.service.FakeStoreProductService;
 import org.example.productcatalogservice.service.IProductservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,8 +23,12 @@ public class ProductController {
 
 
     @Autowired
+    @Qualifier("Fps") //to specify which implementation i should use
     private IProductservice productService;
 
+    @Autowired
+    @Qualifier("Sps")
+    private IProductservice productservice2;
 
     @GetMapping("")
     public List<ProductDto> getAllProducts(Long id){
@@ -38,6 +43,7 @@ public class ProductController {
 
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductbyId(@PathVariable("id") Long productId){
         //ResponseEntity<ProductDto> productDtoResponseEntity= new ResponseEntity<>();
@@ -46,22 +52,26 @@ public class ProductController {
            headers.add("Accept", "application/json");
 
 
-           if (productId < 0 || productId > 20) {
+           if (productId < 0 ) {
                throw new IllegalArgumentException("Invalid product id");
                // return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                /*ending response entity with headers and setting status*/
 
            }
+          // Product product= productService.getProductbyId(productId);
+           Product product= productservice2.getProductbyId(productId);
 
-           return new ResponseEntity<>(from(productService.getProductbyId(productId)), HttpStatus.OK);
+           return new ResponseEntity<>(from(product), HttpStatus.OK);
        }catch(IllegalArgumentException e){
            throw e;
        }
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product){
-        return product;
+    public ProductDto createProduct(@RequestBody ProductDto productdto){
+       Product product=productservice2.save(from(productdto));
+       return from(product);
+
     }
 
     @PutMapping("/{productId}")
@@ -74,25 +84,14 @@ public class ProductController {
         return from(product);
     }
 
-    //
 
 
-    private ProductDto from(Product product){
-        ProductDto productDto = new ProductDto();
-        productDto.setId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setPrice(product.getPrice());
-        productDto.setDescription(product.getDescription());
-        productDto.setImageUrl(product.getImageUrl());
-        if(product.getCategory() != null){
-            CategoryDto categoryDto = new CategoryDto();
-            categoryDto.setName(product.getCategory().getName());
-            categoryDto.setId(product.getCategory().getId());
-            categoryDto.setDescription(product.getCategory().getDescription());
-        }
-        productDto.setCategory(productDto.getCategory());
-        return productDto;
-    }
+@GetMapping("/categoryname/{id}")
+public String getCategoryName(@PathVariable("id") Long id){
+        String CategoryName=productservice2.getCategoryNamebyProductId(id);
+        return CategoryName;
+}
+
 
 
     private Product from(ProductDto productDto) {
@@ -112,5 +111,22 @@ public class ProductController {
             product.setCategory(category);
         }
         return product;
+    }
+
+    private ProductDto from(Product product){
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setPrice(product.getPrice());
+        productDto.setDescription(product.getDescription());
+        productDto.setImageUrl(product.getImageUrl());
+        if(product.getCategory() != null){
+            CategoryDto categoryDto = new CategoryDto();
+            categoryDto.setName(product.getCategory().getName());
+            categoryDto.setId(product.getCategory().getId());
+            categoryDto.setDescription(product.getCategory().getDescription());
+        }
+        productDto.setCategory(productDto.getCategory());
+        return productDto;
     }
 }
