@@ -22,19 +22,19 @@ import java.util.List;
 public class ProductController {
 
 
-    @Autowired
+/*    @Autowired
     @Qualifier("Fps") //to specify which implementation i should use
-    private IProductservice productService;
+    private IProductservice productService;*/
 
     @Autowired
-    @Qualifier("Sps")
+    //@Qualifier("Sps")
     private IProductservice productservice2;
 
     @GetMapping("")
     public List<ProductDto> getAllProducts(Long id){
 
         List<ProductDto> productDtos = new ArrayList<>();
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productservice2.getAllProducts();
         for(Product product : products){
             //ProductDto productDto = new ProductDto();
             productDtos.add(from(product));
@@ -77,7 +77,7 @@ public class ProductController {
     @PutMapping("/{productId}")
     public ProductDto replaceProduct(@RequestBody ProductDto productDto, @PathVariable("productId") Long productId){
         Product product = from(productDto);
-        product=productService.replaceProduct(productId,product);
+        product=productservice2.replaceProduct(productId,product);
         if(product == null){
             throw new IllegalArgumentException("unable to replace product as productid is invalid");
         }

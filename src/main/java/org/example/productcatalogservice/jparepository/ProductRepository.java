@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product,Long> {
 
 
     Optional<Product> findById(Long productId);
@@ -22,8 +22,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product save(Product product);
 
+    List<Product> findProductByOrderByPrice();
 
     @Query("select c.name from Category c join Product p on p.category.id=c.id where p.id=:productId")
     String getCategoryByProductId(Long productId);
+
+    @Query("Select p.name from Product p where p.id=?1")
+    String findProductTitleById(Long productId);
 
 }

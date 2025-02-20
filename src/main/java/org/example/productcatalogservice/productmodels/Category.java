@@ -1,5 +1,6 @@
 package org.example.productcatalogservice.productmodels;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -15,5 +16,7 @@ public class Category extends BaseModel {
     private String description;
     @OneToMany(mappedBy = "category")  /*helps in preventing creation of mapping table in case of onetomany or manytoone*/
     /* "category" name is variable name mentioned in product class*/
+
+    @JsonBackReference
     private List<Product> products;
 }
